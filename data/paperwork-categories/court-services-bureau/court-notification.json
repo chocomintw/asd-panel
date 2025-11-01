@@ -1,0 +1,13 @@
+{
+  "id": "court_notification",
+  "title": "Court Notification",
+  "description": "Court notification / subpoena template.",
+  "icon": "Briefcase",
+  "color": "orange",
+  "fields": [
+    { "name": "subject", "label": "Subject", "type": "text", "required": true },
+    { "name": "case_number", "label": "Case number", "type": "text" },
+    { "name": "hearing_date", "label": "Hearing date", "type": "date" },
+    { "name": "details", "label": "Details", "type": "textarea" }
+  ]
+}

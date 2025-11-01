@@ -1,0 +1,13 @@
+{
+  "id": "training_request",
+  "title": "Training Request",
+  "description": "Form to request training/course attendance.",
+  "icon": "Award",
+  "color": "green",
+  "fields": [
+    { "name": "student", "label": "Student", "type": "text", "required": true },
+    { "name": "course", "label": "Course title", "type": "text" },
+    { "name": "date", "label": "Course date", "type": "date" },
+    { "name": "remarks", "label": "Remarks", "type": "textarea" }
+  ]
+}

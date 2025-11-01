@@ -1,0 +1,13 @@
+{
+  "id": "fto_evaluation",
+  "title": "FTO Evaluation",
+  "description": "Evaluate trainee performance during field training.",
+  "icon": "Clipboard",
+  "color": "blue",
+  "fields": [
+    { "name": "trainee_name", "label": "Trainee name", "type": "text", "required": true },
+    { "name": "fto_name", "label": "FTO name", "type": "text" },
+    { "name": "evaluation_date", "label": "Evaluation date", "type": "date" },
+    { "name": "performance_notes", "label": "Performance notes", "type": "textarea" }
+  ]
+}

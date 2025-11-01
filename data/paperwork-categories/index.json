@@ -1,0 +1,6 @@
+[
+  { "id": "field_training_program", "title": "Field Training Program", "description": "Trainee evaluations and FTO reports", "folder": "field-training-program" },
+  { "id": "training_bureau", "title": "Training Bureau", "description": "Training requests and course records", "folder": "training-bureau" },
+  { "id": "basic_sergeant_supervisory_school", "title": "Basic Sergeant Supervisory School", "description": "Sergeant supervisory training", "folder": "basic-sergeant-supervisory-school" },
+  { "id": "court_services_bureau", "title": "Court Services Bureau", "description": "Court-related paperwork", "folder": "court-services-bureau" }
+]

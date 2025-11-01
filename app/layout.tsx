@@ -22,18 +22,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider>
-          <AuthProvider>
-            <div className="min-h-screen bg-background text-foreground">
-              <Header />
-              <main>
-                <ProtectedRoute>
-                  {children}
-                </ProtectedRoute>
-              </main>
-            </div>
-          </AuthProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <div className="min-h-screen bg-background text-foreground">
+            <Header />
+            <main>
+              <ProtectedRoute>{children}</ProtectedRoute>
+            </main>
+          </div>
+        </AuthProvider>
       </body>
     </html>
   )

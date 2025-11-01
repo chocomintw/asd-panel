@@ -1,0 +1,42 @@
+[
+  {
+    "id": "leave_request",
+    "title": "Leave Request",
+    "description": "Request paid/unpaid leave with dates and reason.",
+    "icon": "Calendar",
+    "color": "blue",
+    "fields": [
+      { "name": "employee_name", "label": "Employee name", "type": "text" },
+      { "name": "leave_type", "label": "Leave type", "type": "text" },
+      { "name": "start_date", "label": "Start date", "type": "date" },
+      { "name": "end_date", "label": "End date", "type": "date" },
+      { "name": "reason", "label": "Reason", "type": "textarea" }
+    ]
+  },
+  {
+    "id": "equipment_request",
+    "title": "Equipment Request",
+    "description": "Request hardware or software items.",
+    "icon": "Package",
+    "color": "green",
+    "fields": [
+      { "name": "requester", "label": "Requester", "type": "text" },
+      { "name": "item", "label": "Item requested", "type": "text" },
+      { "name": "quantity", "label": "Quantity", "type": "number" },
+      { "name": "justification", "label": "Justification", "type": "textarea" }
+    ]
+  },
+  {
+    "id": "purchase_order",
+    "title": "Purchase Order",
+    "description": "Create a quick PO draft for approvals.",
+    "icon": "CreditCard",
+    "color": "purple",
+    "fields": [
+      { "name": "vendor", "label": "Vendor", "type": "text" },
+      { "name": "amount", "label": "Amount", "type": "text" },
+      { "name": "items", "label": "Items / description", "type": "textarea" },
+      { "name": "requested_by", "label": "Requested by", "type": "text" }
+    ]
+  }
+]

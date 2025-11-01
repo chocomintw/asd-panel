@@ -10,11 +10,9 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const router = useRouter()
   const pathname = usePathname()
 
-  console.log('ProtectedRoute state:', { pathname, loading, user })
-
   const isAuthRoute = !!pathname?.startsWith('/auth')
 
-  // If user just signed in while on an auth page, send them to the app root
+  // if authenticated while on auth pages -> go home
   useEffect(() => {
     if (user && isAuthRoute) {
       router.replace('/')
@@ -29,14 +27,14 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     }
   }, [shouldRedirect, router, pathname])
 
-  // single return path to avoid hook-order issues
+  // single return to avoid hook-order issues
   let content: React.ReactNode = null
 
   if (loading) {
     content = (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>

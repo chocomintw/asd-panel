@@ -13,9 +13,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { LogOut, User, Mail, Shield, Settings } from 'lucide-react'
+import { usePathname } from 'next/navigation' // added import
 
 export function Header() {
   const { user, signOut } = useAuth()
+  const pathname = usePathname() // get current route
+
+  // hide header on auth pages (e.g. /auth, /auth/login, /auth/register)
+  if (pathname?.startsWith('/auth')) return null
 
   const handleSignOut = async () => {
     try {

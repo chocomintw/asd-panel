@@ -2,8 +2,8 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { User, onAuthStateChanged } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
+import type { User } from 'firebase/auth'
+import { getAuthClient } from '@/lib/firebase'
 
 interface AuthContextType {
   user: User | null
@@ -12,11 +12,11 @@ interface AuthContextType {
   signOut: () => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextType>({ 
-  user: null, 
+const AuthContext = createContext<AuthContextType>({
+  user: null,
   loading: true,
   signIn: async () => {},
-  signOut: async () => {}
+  signOut: async () => {},
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -24,13 +24,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log('Auth state changed:', user ? user.email : 'No user')
-      setUser(user)
-      setLoading(false)
-    })
+    let unsubscribe: (() => void) | undefined
+    let mounted = true
+    let fallback: ReturnType<typeof setTimeout> | null = null
 
-    return () => unsubscribe()
+    console.log('AuthProvider: init client auth subscription')
+
+    // start fallback immediately
+    fallback = setTimeout(() => {
+      console.warn('AuthProvider fallback: setting loading=false after timeout')
+      setLoading(false)
+      fallback = null
+    }, 10000)
+
+    getAuthClient()
+      .then(async (auth) => {
+        if (!mounted) return
+        if (!auth) {
+          console.warn('getAuthClient returned null')
+          if (fallback) {
+            clearTimeout(fallback)
+            fallback = null
+          }
+          setLoading(false)
+          return
+        }
+        const { onAuthStateChanged } = await import('firebase/auth')
+        unsubscribe = onAuthStateChanged(auth, (u) => {
+          console.log('Auth state changed:', u ? u.email : 'No user')
+          if (fallback) {
+            clearTimeout(fallback)
+            fallback = null
+          }
+          setUser(u)
+          setLoading(false)
+        })
+      })
+      .catch((err) => {
+        console.error('Error initializing auth client:', err)
+        if (fallback) {
+          clearTimeout(fallback)
+          fallback = null
+        }
+        setLoading(false)
+      })
+
+    return () => {
+      mounted = false
+      if (fallback) {
+        clearTimeout(fallback)
+        fallback = null
+      }
+      if (typeof unsubscribe === 'function') unsubscribe()
+    }
   }, [])
 
   const signIn = async () => {

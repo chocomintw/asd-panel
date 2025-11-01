@@ -10,8 +10,8 @@ import { Header } from '@/components/header'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Discord OIDC Auth',
-  description: 'Authenticate with Discord using Firebase OIDC',
+  title: 'Administrative Services Division Panel',
+  description: 'User-friendly panel for everything you need in the Administrative Services Division.',
 }
 
 export default function RootLayout({

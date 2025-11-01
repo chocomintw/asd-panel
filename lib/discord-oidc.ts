@@ -1,41 +1,44 @@
 // lib/discord-oidc.ts
-import { OAuthProvider, signInWithPopup, signOut } from 'firebase/auth'
-import { auth } from './firebase'
+import { OAuthProvider, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth'
+import { getAuthClient } from './firebase'
 
 export const signInWithDiscordOIDC = async () => {
   try {
     console.log('Starting Discord OIDC flow...')
-    
+
+    const auth = await getAuthClient()
+    if (!auth) throw new Error('Auth client unavailable')
+
     // Create OIDC provider for Discord
     const provider = new OAuthProvider('oidc.discord')
-    
+
     // Add scopes - only request what you need
     provider.addScope('identify')
     provider.addScope('email')
-    
+
     // Set custom parameters for Discord
     provider.setCustomParameters({
       prompt: 'consent'
     })
 
     console.log('OIDC Provider configured, attempting sign-in...')
-    
+
     // Sign in with popup
     const result = await signInWithPopup(auth, provider)
-    
+
     // Get the OAuth credential
     const credential = OAuthProvider.credentialFromResult(result)
     console.log('OIDC credential received:', !!credential)
-    
+
     console.log('OIDC Sign-in successful:', {
       user: result.user.email,
       displayName: result.user.displayName,
       uid: result.user.uid,
       providerId: credential?.providerId
     })
-    
+
     return result.user
-    
+
   } catch (error: any) {
     console.error('Detailed Discord OIDC error:', {
       code: error.code,
@@ -44,9 +47,9 @@ export const signInWithDiscordOIDC = async () => {
       email: error.customData?.email,
       credential: error.credential
     })
-    
+
     let userMessage = 'Failed to sign in with Discord'
-    
+
     switch (error.code) {
       case 'auth/popup-blocked':
         userMessage = 'Popup was blocked by your browser. Please allow popups for this site.'
@@ -64,14 +67,19 @@ export const signInWithDiscordOIDC = async () => {
         userMessage = 'Authentication failed. Please try again.'
         break
     }
-    
+
     throw new Error(userMessage)
   }
 }
 
 export const logout = async () => {
   try {
-    await signOut(auth)
+    const auth = await getAuthClient()
+    if (!auth) {
+      console.warn('Auth client unavailable for logout')
+      return
+    }
+    await firebaseSignOut(auth)
     console.log('User signed out successfully')
   } catch (error) {
     console.error('Logout error:', error)

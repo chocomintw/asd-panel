@@ -28,16 +28,16 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md mx-auto backdrop-blur-sm bg-white/90">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-linear-to-br from-purple-900 via-blue-900 to-indigo-900">
+      <Card className="w-full max-w-md mx-auto">
         <CardHeader className="text-center space-y-4">
           <div className="w-16 h-16 bg-[#5865F2] rounded-full flex items-center justify-center mx-auto">
             <Shield className="h-8 w-8 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-900">
+          <CardTitle className="text-2xl font-bold">
             Welcome
           </CardTitle>
-          <CardDescription className="text-gray-600">
+          <CardDescription>
             Please sign in with Discord to continue
           </CardDescription>
         </CardHeader>
@@ -53,7 +53,7 @@ export default function AuthPage() {
           <Button
             onClick={handleSignIn}
             disabled={loading}
-            className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white py-6 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white py-6 text-lg"
             size="lg"
           >
             {loading ? (
@@ -69,10 +69,9 @@ export default function AuthPage() {
             )}
           </Button>
           
-          <div className="text-center text-sm text-gray-600 space-y-2">
-            <p>You'll be redirected to Discord to authorize this application</p>
-            <p className="text-xs opacity-75">Make sure popups are enabled for this site</p>
-          </div>
+          <p className="text-center text-sm text-muted-foreground">
+            You will be redirected to Discord to authorize this application
+          </p>
         </CardContent>
       </Card>
     </div>

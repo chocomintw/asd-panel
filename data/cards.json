@@ -1,44 +1,16 @@
 [
   {
-    "title": "Paperwork Generator",
+    "title": "Paperwork Generators",
     "description": "Generate BBCode forms quickly.",
-    "href": "/paperwork-generator",
+    "href": "/paperwork-generators",
     "icon": "BookOpen",
     "color": "blue"
   },
   {
     "title": "Tools",
-    "description": "Diverse tools to help you work.",
+    "description": "Tools to save your life with paperwork.",
     "href": "/tools",
     "icon": "Wrench",
     "color": "green"
-  },
-  {
-    "title": "Activity Log",
-    "description": "View recent activity and events.",
-    "href": "/activity",
-    "icon": "Activity",
-    "color": "purple"
-  },
-  {
-    "title": "Security",
-    "description": "Manage 2FA and sessions.",
-    "href": "/security",
-    "icon": "Shield",
-    "color": "orange"
-  },
-  {
-    "title": "Notifications",
-    "description": "Notification preferences.",
-    "href": "/notifications",
-    "icon": "Bell",
-    "color": "yellow"
-  },
-  {
-    "title": "Privacy",
-    "description": "Data sharing & visibility controls.",
-    "href": "/privacy",
-    "icon": "Key",
-    "color": "red"
   }
 ]

@@ -1,0 +1,32 @@
+{
+  "id": "dst-app-received",
+  "name": "DST App Received",
+  "description": "Post this whenever a DST Application is received",
+  "category": "training-bureau",
+  "baseContent": "[center][b][size=150]OFFICE OF THE SHERIFF[/size][/b][/center]\n\n\n\n[center][aligntable=left,200,0,0,0,0,transparent]\n[indent][b]JONATHAN MEDINA[/b]\nLOS SANTOS COUNTY SHERIFF[/indent][/aligntable]\n[aligntable=right,200,0,0,0,0,transparent]\n[b][indent]HALL OF JUSTICE[/b]\n301 INNOCENCE BOULEVARD[indent][/aligntable]\n[img]https://i.imgur.com/LEWTXbL.png[/img][hr][/hr][/center]\n\n[indent]{{date:field_1761991834111}}\n\nDear {{text:field_1761991840132}},\n\nWe have received your application and qualifications for the position of [b]Deputy Sheriff Trainee[/b]. Thank you for showing interest in employment with the Los Santos County Sheriff's Department.\n\nYour request has been acknowledged and forwarded to the Pre-Employment Unit for further deliberation & conclusion. This deliberation will include a thorough examination of your previous service with the Department and personal background information.\n\nWhile extraneous circumstances may preclude a fixed timeframe, you should expect a response to your request within 72 hours.\n\nSincerely,\n[imgmw=100]https://i.imgur.com/F1HzZkv.png[/imgmw]\nJonathan Medina, Sheriff\n[imgmw=125]https://i.imgur.com/OZCXf9r.png[/imgmw]\nLisa Chan, Unit Commander\nTraining Bureau[/indent]\n[br][/br]\n[center][img]https://i.imgur.com/vggSUzN.png[/img][/center]",
+  "fields": [
+    {
+      "id": "field_1",
+      "type": "date",
+      "name": "field_1761991834111",
+      "label": "Field 1761991834111",
+      "required": true,
+      "placeholder": "Enter field 1761991834111"
+    },
+    {
+      "id": "field_2",
+      "type": "text",
+      "name": "field_1761991840132",
+      "label": "Field 1761991840132",
+      "required": true,
+      "placeholder": "Enter field 1761991840132"
+    }
+  ],
+  "version": "1.0",
+  "author": "ASD Panel",
+  "created": "2025-11-01",
+  "formConfig": {
+    "layout": "vertical",
+    "submitText": "Generate Document"
+  }
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "forum-post",
+    "name": "Forum Post",
+    "description": "Generate formatted forum posts",
+    "category": "communications",
+    "baseContent": "[b]{{text:title}}[/b]\n\nPosted by: {{text:author}}\nDate: {{date:post_date}}\n\n{{textarea:content}}\n\nSignature: {{text:signature}}",
+    "fields": [
+      {
+        "id": "field_1",
+        "type": "text",
+        "name": "title",
+        "label": "Post Title",
+        "required": true,
+        "placeholder": "Enter post title"
+      },
+      {
+        "id": "field_2",
+        "type": "text",
+        "name": "author",
+        "label": "Author Name",
+        "required": true,
+        "placeholder": "Your name"
+      },
+      {
+        "id": "field_3",
+        "type": "date",
+        "name": "post_date",
+        "label": "Post Date",
+        "required": true
+      },
+      {
+        "id": "field_4",
+        "type": "textarea",
+        "name": "content",
+        "label": "Post Content",
+        "required": true,
+        "placeholder": "Write your post content here..."
+      },
+      {
+        "id": "field_5",
+        "type": "text",
+        "name": "signature",
+        "label": "Signature",
+        "required": false,
+        "placeholder": "Your signature"
+      }
+    ]
+  }
+]

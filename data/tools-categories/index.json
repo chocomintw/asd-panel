@@ -1,0 +1,26 @@
+[
+  {
+  "id": "bbcode-to-json",
+  "folder": "bbcode-to-json",
+  "title": "BBCode to JSON Parser",
+  "description": "Convert BBCode formatted text to structured JSON data",
+  "icon": "🔤",
+  "category": "Data Conversion"
+  },
+  {
+  "id": "json-to-bbcode",
+  "folder": "json-to-bbcode",
+  "title": "JSON to BBCode Converter",
+  "description": "Convert structured JSON data back to BBCode format",
+  "icon": "🔄",
+  "category": "Data Conversion"
+  },
+  {
+  "id": "bbcode-template-editor",
+  "folder": "bbcode-template-editor",
+  "title": "BBCode Template Editor",
+  "description": "Create dynamic paperwork templates with form fields",
+  "icon": "📝",
+  "category": "Template Creation"
+  }
+]

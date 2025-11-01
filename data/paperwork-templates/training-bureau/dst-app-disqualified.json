@@ -1,0 +1,41 @@
+{
+  "id": "dst-app-disqualified",
+  "name": "dst-app-disqualified",
+  "description": "DST Application Disqualification",
+  "category": "training-bureau",
+  "fields": [
+    {
+      "id": "field_1762028293029",
+      "type": "date",
+      "name": "field_1762028293029",
+      "label": "Field 1762028293029",
+      "required": true,
+      "placeholder": "Enter field 1762028293029"
+    },
+    {
+      "id": "field_1762028297483",
+      "type": "text",
+      "name": "field_1762028297483",
+      "label": "Field 1762028297483",
+      "required": true,
+      "placeholder": "Enter field 1762028297483"
+    },
+    {
+      "id": "field_1762028322518",
+      "type": "textarea",
+      "name": "field_1762028322518",
+      "label": "Field 1762028322518",
+      "required": true,
+      "placeholder": "Enter field 1762028322518",
+      "rows": 4
+    }
+  ],
+  "template": "[center][b][size=150]OFFICE OF THE SHERIFF[/size][/b][/center]\n\n[center][aligntable=left,200,0,0,0,0,transparent]\n[indent][b]JONATHAN MEDINA[/b]\nLOS SANTOS COUNTY SHERIFF[/indent][/aligntable]\n[aligntable=right,200,0,0,0,0,transparent]\n[b][indent]HALL OF JUSTICE[/b]\n301 INNOCENCE BOULEVARD[indent][/aligntable]\n[img]https://i.imgur.com/LEWTXbL.png[/img][hr][/hr][/center]\n\n[indent]{{date:field_1762028293029}}\n\nDear {{text:field_1762028297483}},\n\nWe have evaluated your application and qualifications for the position of [b]Deputy Sheriff Trainee[/b] and regret to inform you that you were not selected for this position due to issues that may have involved:\n\n[list][*]Employment history;\n[*]Credit or financial history;\n[*]Discovered undisclosed information;\n[*]Dishonesty;\n[*]Incomplete application;\n[*]Other reason(s) as not listed.\n[*][ooc]{{textarea:field_1762028322518}}[/ooc][/list][br][/br]\nUnder all circumstances, you are ineligible to reapply during the current recruitment drive as well as any concurrent recruitment drives for civilian employment. You may reapply [b]three (3)[/b] weeks from the date of your denial if 'open continuous' is ongoing.\n\n[b]Any formal appeal must be in writing and received by Training Bureau Command within ten (10) business days from the [u]postmark date[/u] of this letter. Please note, appeals may take 5-7 business days to be processed.\n\nTo appeal, you must demonstrate that the factors leading to your disqualification are in error.[/b]\n\nSincerely,\n[imgmw=100]https://i.imgur.com/F1HzZkv.png[/imgmw]\nJonathan Medina, Sheriff\n[imgmw=125]https://i.imgur.com/OZCXf9r.png[/imgmw]\nLisa Chan, Unit Commander\nTraining Bureau[/indent]\n[br][/br]\n[center][img]https://i.imgur.com/vggSUzN.png[/img][/center]",
+  "version": "1.0",
+  "author": "ASD Panel",
+  "created": "2025-11-01",
+  "formConfig": {
+    "layout": "vertical",
+    "submitText": "Generate Document"
+  }
+}

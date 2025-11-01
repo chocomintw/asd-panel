@@ -1,0 +1,56 @@
+{
+  "id": "offer-test",
+  "name": "offer test",
+  "description": "very cool i think",
+  "category": "training-bureau",
+  "fields": [
+    {
+      "id": "mr__ms__mrs__lastname",
+      "type": "text",
+      "name": "Mr./Ms./Mrs. Lastname",
+      "label": "Mr./Ms./Mrs. Lastname",
+      "required": true,
+      "placeholder": "Enter Mr./Ms./Mrs. Lastname"
+    },
+    {
+      "id": "insert_your_signature_here",
+      "type": "url",
+      "name": "insert_your_signature_here",
+      "label": "Insert Your Signature Here",
+      "required": true,
+      "placeholder": "Enter insert your signature here"
+    },
+    {
+      "id": "firstname_lastname",
+      "type": "text",
+      "name": "Firstname Lastname",
+      "label": "Firstname Lastname",
+      "required": true,
+      "placeholder": "Enter Firstname Lastname"
+    },
+    {
+      "id": "rank",
+      "type": "text",
+      "name": "Rank",
+      "label": "Rank",
+      "required": true,
+      "placeholder": "Enter Rank"
+    },
+    {
+      "id": "unit_of_assignment",
+      "type": "text",
+      "name": "Unit of Assignment",
+      "label": "Unit of Assignment",
+      "required": true,
+      "placeholder": "Enter Unit of Assignment"
+    }
+  ],
+  "template": "[letterhead]Dear {{text:Mr./Ms./Mrs. Lastname}}:\n\n\n[center][b]TRANSFER REQUEST VERDICT[/b][/center]\n\n\nThis letter is in response to your application for employment to the Los Santos County Sheriff's Department. Your application has been deliberated and concluded by the Department's Command Staff.\n\nWe are presenting you with a conditional offer of employment at the civil service title of [b]Rank[/b]. This position includes the base annual gross salary, notwithstanding hazard pay or assignment bonus.\n\nIt is incumbent of you to terminate your employment with any Department within the County of Los Santos before formally accepting this offer.\n\nPlease return a letter with your intent to accept or decline this employment offer.\n\nSincerely,\n\nGRANT MENDEZ, SHERIFF\n[imgmw=125]{{url:insert_your_signature_here}}[/imgmw]\n{{text:Firstname Lastname}}, {{text:Rank}}\n{{text:Unit of Assignment}}[/letterhead]",
+  "version": "1.0",
+  "author": "ASD Panel",
+  "created": "2025-11-01",
+  "formConfig": {
+    "layout": "vertical",
+    "submitText": "Generate Document"
+  }
+}

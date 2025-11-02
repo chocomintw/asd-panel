@@ -50,24 +50,122 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
   const [listItems, setListItems] = useState<{ [key: string]: string[] }>({})
   const [isLoaded, setIsLoaded] = useState(false)
 
-  // Generate a unique storage key based on template
-  const storageKey = `bbcode-form-${template.id}`
+  // Debug: Check what's actually in the template fields
+  useEffect(() => {
+    console.log('🔍 FULL TEMPLATE FIELDS DEBUG:')
+    template.fields?.forEach((field, index) => {
+      console.log(`Field ${index + 1}:`, {
+        name: field.name,
+        label: field.label,
+        type: field.type,
+        // Log ALL properties to see what's available
+        allProperties: field,
+        hasLocalStorage: 'localStorage' in field,
+        localStorageValue: (field as any).localStorage,
+        stringified: JSON.stringify(field, null, 2)
+      })
+    })
+  }, [template.fields])
 
-  // Load saved data from localStorage on component mount
+  // Generate unique storage keys for each field with localStorage
+  const getFieldStorageKey = (fieldName: string) => {
+    return `bbcode-form-${template.id}-${fieldName}`
+  }
+
+  // Get fields that should use localStorage - with better detection
+  const getFieldsWithLocalStorage = () => {
+    const fields = template.fields?.filter(field => {
+      const fieldAny = field as any
+      
+      // Check multiple possible property names and locations
+      const hasLocalStorage = 
+        fieldAny.localStorage === true ||
+        fieldAny.localStorage === 'true' ||
+        fieldAny.saveToStorage === true ||
+        fieldAny.persist === true ||
+        fieldAny.attributes?.localStorage === true ||
+        fieldAny.settings?.localStorage === true ||
+        fieldAny.metadata?.localStorage === true
+      
+      console.log(`🔍 Checking field "${field.name}" for localStorage:`, {
+        localStorage: fieldAny.localStorage,
+        saveToStorage: fieldAny.saveToStorage,
+        persist: fieldAny.persist,
+        attributes: fieldAny.attributes,
+        settings: fieldAny.settings,
+        metadata: fieldAny.metadata,
+        hasLocalStorage
+      })
+      
+      return hasLocalStorage
+    }) || []
+
+    console.log('✅ Fields with localStorage enabled:', fields.map(f => f.name))
+    return fields
+  }
+
+  // Load saved data from localStorage for each field individually
   useEffect(() => {
     const loadSavedData = () => {
       try {
-        const saved = localStorage.getItem(storageKey)
-        if (saved) {
-          const parsedData = JSON.parse(saved)
-          console.log('📥 Loading saved data:', parsedData)
+        const fieldsWithLocalStorage = getFieldsWithLocalStorage()
+        const loadedFormData: FormData = {}
+        const loadedListItems: { [key: string]: string[] } = {}
+
+        console.log('📥 Loading saved data for fields:', fieldsWithLocalStorage.map(f => f.name))
+
+        // Load ALL fields (not just localStorage ones) to ensure proper initialization
+        template.fields?.forEach(field => {
+          const safeField = field as SafeFormField
+          const shouldUseLocalStorage = fieldsWithLocalStorage.some(f => f.name === safeField.name)
           
-          // Set form data from localStorage
-          setFormData(parsedData.formData || {})
-          
-          // Set list items from localStorage
-          setListItems(parsedData.listItems || {})
-        }
+          if (shouldUseLocalStorage) {
+            const fieldStorageKey = getFieldStorageKey(safeField.name)
+            const saved = localStorage.getItem(fieldStorageKey)
+            
+            if (saved) {
+              try {
+                const parsedData = JSON.parse(saved)
+                console.log(`- Field "${safeField.name}":`, parsedData.value)
+                
+                if (safeField.type === 'list') {
+                  loadedListItems[safeField.name] = parsedData.value || ['']
+                } else {
+                  loadedFormData[safeField.name] = parsedData.value
+                }
+              } catch (error) {
+                console.error(`Error parsing saved data for ${safeField.name}:`, error)
+              }
+            } else {
+              console.log(`- Field "${safeField.name}": No saved data found, will use default`)
+              // Initialize with default value if no saved data
+              if (safeField.type === 'checkbox') {
+                loadedFormData[safeField.name] = false
+              } else if (safeField.type === 'list') {
+                loadedListItems[safeField.name] = ['']
+              } else {
+                loadedFormData[safeField.name] = safeField.defaultValue || ''
+              }
+            }
+          } else {
+            // For non-localStorage fields, use defaults
+            if (safeField.type === 'checkbox') {
+              loadedFormData[safeField.name] = false
+            } else if (safeField.type === 'list') {
+              loadedListItems[safeField.name] = ['']
+            } else {
+              loadedFormData[safeField.name] = safeField.defaultValue || ''
+            }
+          }
+        })
+
+        console.log('📋 Final loaded form data:', loadedFormData)
+        console.log('📋 Final loaded list items:', loadedListItems)
+
+        // Update state with loaded data
+        setFormData(loadedFormData)
+        setListItems(loadedListItems)
+        
       } catch (error) {
         console.error('Error loading from localStorage:', error)
       } finally {
@@ -76,92 +174,49 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
     }
 
     loadSavedData()
-  }, [storageKey])
+  }, [template.id])
 
-  // Initialize form data AFTER localStorage is loaded
+  // Save individual fields to localStorage when they change
   useEffect(() => {
     if (!isLoaded) return
 
-    const initialData: FormData = {}
-    let hasInitialData = false
+    const fieldsWithLocalStorage = getFieldsWithLocalStorage()
+    
+    console.log('💾 Checking fields to save:', fieldsWithLocalStorage.map(f => f.name))
 
-    template.fields?.forEach(field => {
+    fieldsWithLocalStorage.forEach(field => {
       const safeField = field as SafeFormField
+      const fieldStorageKey = getFieldStorageKey(safeField.name)
       
-      // Use saved value if available, otherwise use default
-      const savedValue = formData[safeField.name]
-      
-      if (safeField.type === 'checkbox') {
-        initialData[safeField.name] = savedValue !== undefined ? savedValue : false
-      } else if (safeField.type === 'list') {
-        initialData[safeField.name] = []
-        // Use saved list items or initialize with empty string
-        const savedListItems = listItems[safeField.name]
-        if (savedListItems && savedListItems.length > 0) {
-          setListItems(prev => ({ ...prev, [safeField.name]: savedListItems }))
-        } else {
-          setListItems(prev => ({ ...prev, [safeField.name]: [''] }))
-        }
+      let valueToSave: any
+
+      if (safeField.type === 'list') {
+        valueToSave = listItems[safeField.name] || ['']
       } else {
-        // For text, textarea, etc. - use saved value or default
-        initialData[safeField.name] = savedValue !== undefined ? savedValue : (safeField.defaultValue || '')
+        valueToSave = formData[safeField.name]
       }
-      
-      if (savedValue !== undefined) {
-        hasInitialData = true
-      }
-    })
 
-    // Only update form data if we have initial values to set
-    if (hasInitialData) {
-      setFormData(prev => ({ ...prev, ...initialData }))
-    }
-  }, [isLoaded, template])
-
-  // Save to localStorage whenever formData or listItems changes
-  useEffect(() => {
-    if (!isLoaded) return // Don't save until we've finished loading
-
-    const saveToStorage = () => {
-      try {
-        // Get fields that have localStorage enabled
-        const fieldsWithLocalStorage = template.fields?.filter(field => 
-          (field as SafeFormField).localStorage
-        ) || []
-
-        if (fieldsWithLocalStorage.length > 0) {
-          // Only save data for fields with localStorage enabled
-          const formDataToSave: FormData = {}
-          const listItemsToSave: { [key: string]: string[] } = {}
-
-          fieldsWithLocalStorage.forEach(field => {
-            const safeField = field as SafeFormField
-            if (formData[safeField.name] !== undefined) {
-              formDataToSave[safeField.name] = formData[safeField.name]
-            }
-            if (listItems[safeField.name] !== undefined) {
-              listItemsToSave[safeField.name] = listItems[safeField.name]
-            }
-          })
-
+      // Only save if value is defined
+      if (valueToSave !== undefined) {
+        try {
           const dataToSave = {
-            formData: formDataToSave,
-            listItems: listItemsToSave,
+            value: valueToSave,
+            fieldName: safeField.name,
+            fieldType: safeField.type,
             savedAt: new Date().toISOString()
           }
           
-          localStorage.setItem(storageKey, JSON.stringify(dataToSave))
-          console.log('💾 Saved to localStorage:', dataToSave)
+          localStorage.setItem(fieldStorageKey, JSON.stringify(dataToSave))
+          console.log(`💾 Saved field "${safeField.name}":`, dataToSave)
+        } catch (error) {
+          console.error(`Error saving field ${safeField.name}:`, error)
         }
-      } catch (error) {
-        console.error('Error saving to localStorage:', error)
       }
-    }
-
-    saveToStorage()
-  }, [formData, listItems, storageKey, template.fields, isLoaded])
+    })
+  }, [formData, listItems, template.id, isLoaded])
 
   const handleInputChange = (fieldName: string, value: any) => {
+    console.log(`🔄 Changing field "${fieldName}" to:`, value)
     setFormData(prev => ({
       ...prev,
       [fieldName]: value
@@ -169,6 +224,7 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
   }
 
   const handleListChange = (listName: string, index: number, value: string) => {
+    console.log(`🔄 Changing list "${listName}" item ${index} to:`, value)
     setListItems(prev => {
       const newItems = [...(prev[listName] || [])]
       newItems[index] = value
@@ -190,23 +246,36 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
     }))
   }
 
-  // Clear localStorage
+  // Clear localStorage for all fields
   const clearStorage = () => {
-    localStorage.removeItem(storageKey)
+    const fieldsWithLocalStorage = getFieldsWithLocalStorage()
+    
+    fieldsWithLocalStorage.forEach(field => {
+      const safeField = field as SafeFormField
+      const fieldStorageKey = getFieldStorageKey(safeField.name)
+      localStorage.removeItem(fieldStorageKey)
+    })
+    
+    console.log('🗑️ Cleared localStorage for all fields')
+    
     // Reset form to defaults
     const initialData: FormData = {}
+    const initialListItems: { [key: string]: string[] } = {}
+    
     template.fields?.forEach(field => {
       const safeField = field as SafeFormField
       if (safeField.type === 'checkbox') {
         initialData[safeField.name] = false
       } else if (safeField.type === 'list') {
         initialData[safeField.name] = []
-        setListItems(prev => ({ ...prev, [safeField.name]: [''] }))
+        initialListItems[safeField.name] = ['']
       } else {
         initialData[safeField.name] = safeField.defaultValue || ''
       }
     })
+    
     setFormData(initialData)
+    setListItems(initialListItems)
   }
 
   const generateBBCode = () => {
@@ -267,11 +336,14 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
       }
 
       if (field) {
+        console.log(`🔧 Processing field "${field.name}" for placeholder "${placeholder}"`)
+        
         switch (field.type) {
           case 'text':
           case 'textarea':
           case 'url':
             value = formData[field.name] || ''
+            console.log(`   - Text value: "${value}"`)
             break
           
           case 'date':
@@ -279,6 +351,7 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
               try {
                 const date = new Date(formData[field.name])
                 value = format(date, 'MMMM dd, yyyy')
+                console.log(`   - Date value: "${value}"`)
               } catch (error) {
                 value = formData[field.name] || ''
               }
@@ -287,12 +360,14 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
           
           case 'select':
             value = formData[field.name] || ''
+            console.log(`   - Select value: "${value}"`)
             break
           
           case 'checkbox':
             value = formData[field.name] ? 
               (field.checkedValue || '[cbc]') : 
               (field.uncheckedValue || '[cb]')
+            console.log(`   - Checkbox value: "${value}" (checked: ${formData[field.name]})`)
             break
           
           case 'list':
@@ -300,6 +375,7 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
             if (items.length > 0) {
               // Create proper BBCode list format - NO [list] tags here!
               value = items.map(item => `[*]${item}`).join('')
+              console.log(`   - List value: "${value}"`)
             } else {
               value = ''
             }
@@ -324,7 +400,10 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
         }
 
         // Replace ALL instances of this placeholder in the output
+        const originalOutput = output
         output = output.replace(new RegExp(placeholder, 'g'), value)
+        console.log(`   - Replaced "${placeholder}" with "${value}"`)
+        console.log(`   - Output changed: ${originalOutput !== output}`)
         
         // Mark this placeholder as processed
         processedPlaceholders.add(placeholder)
@@ -334,10 +413,9 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
       }
     }
 
+    console.log('🎉 Final BBCode output:', output)
     onGenerate(output)
   }
-
-  // ... rest of your component remains the same (getFieldIcon, getFieldBadges, renderField, etc.)
 
   const getFieldIcon = (type: string) => {
     switch (type) {
@@ -354,6 +432,10 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
 
   const getFieldBadges = (field: SafeFormField) => {
     const badges = []
+    const fieldsWithLocalStorage = getFieldsWithLocalStorage()
+    const hasLocalStorage = fieldsWithLocalStorage.some(f => f.name === field.name)
+    
+    console.log(`🏷️ Getting badges for "${field.name}": hasLocalStorage = ${hasLocalStorage}`)
     
     if (field.required && field.type !== 'checkbox') {
       badges.push(
@@ -363,7 +445,7 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
       )
     }
     
-    if (field.localStorage) {
+    if (hasLocalStorage) {
       badges.push(
         <Badge key="localstorage" variant="secondary" className="text-xs">
           <Save className="h-3 w-3 mr-1" />
@@ -377,6 +459,8 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
 
   const renderField = (field: any) => {
     const safeField = field as SafeFormField
+    const fieldsWithLocalStorage = getFieldsWithLocalStorage()
+    const hasLocalStorage = fieldsWithLocalStorage.some(f => f.name === safeField.name)
     
     // Common props that apply to most inputs
     const commonProps = {
@@ -392,6 +476,12 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
     const fieldValue = formData[safeField.name] || ''
     const showRequiredMessage = safeField.required && safeField.type !== 'checkbox' && !fieldValue
 
+    console.log(`🎨 Rendering field "${safeField.name}":`, {
+      value: fieldValue,
+      hasLocalStorage,
+      type: safeField.type
+    })
+
     switch (safeField.type) {
       case 'text':
       case 'url':
@@ -405,6 +495,9 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
             />
             {showRequiredMessage && (
               <p className="text-xs text-red-500">This field is required</p>
+            )}
+            {hasLocalStorage && (
+              <p className="text-xs text-green-600">💾 Auto-saved</p>
             )}
           </div>
         )
@@ -420,6 +513,9 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
             />
             {showRequiredMessage && (
               <p className="text-xs text-red-500">This field is required</p>
+            )}
+            {hasLocalStorage && (
+              <p className="text-xs text-green-600">💾 Auto-saved</p>
             )}
           </div>
         )
@@ -453,6 +549,9 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
             {showRequiredMessage && (
               <p className="text-xs text-red-500">This field is required</p>
             )}
+            {hasLocalStorage && (
+              <p className="text-xs text-green-600">💾 Auto-saved</p>
+            )}
           </div>
         )
       
@@ -480,22 +579,30 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
             {showRequiredMessage && (
               <p className="text-xs text-red-500">This field is required</p>
             )}
+            {hasLocalStorage && (
+              <p className="text-xs text-green-600">💾 Auto-saved</p>
+            )}
           </div>
         )
       
       case 'checkbox':
         return (
-          <div className="flex items-center space-x-2">
-            <Switch
-              checked={fieldValue || false}
-              onCheckedChange={(checked) => handleInputChange(safeField.name, checked)}
-              id={safeField.name}
-            />
-            <Label htmlFor={safeField.name} className="text-sm">
-              {fieldValue ? 
-                (safeField.checkedValue || '[cbc]') : 
-                (safeField.uncheckedValue || '[cb]')}
-            </Label>
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <Switch
+                checked={fieldValue || false}
+                onCheckedChange={(checked) => handleInputChange(safeField.name, checked)}
+                id={safeField.name}
+              />
+              <Label htmlFor={safeField.name} className="text-sm">
+                {fieldValue ? 
+                  (safeField.checkedValue || '[cbc]') : 
+                  (safeField.uncheckedValue || '[cb]')}
+              </Label>
+            </div>
+            {hasLocalStorage && (
+              <p className="text-xs text-green-600">💾 Auto-saved</p>
+            )}
           </div>
         )
       
@@ -544,6 +651,9 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
             {safeField.required && !hasListItems && (
               <p className="text-xs text-red-500">At least one list item is required</p>
             )}
+            {hasLocalStorage && (
+              <p className="text-xs text-green-600">💾 Auto-saved</p>
+            )}
           </div>
         )
       
@@ -557,6 +667,9 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
       <div className="space-y-4">
         {template.fields?.map((field) => {
           const safeField = field as SafeFormField
+          const fieldsWithLocalStorage = getFieldsWithLocalStorage()
+          const hasLocalStorage = fieldsWithLocalStorage.some(f => f.name === safeField.name)
+          
           return (
             <Card key={safeField.id} className="border-0 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-transparent">
               <CardHeader className="pb-3">
@@ -571,7 +684,7 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
                       </CardTitle>
                       <CardDescription className="text-xs text-gray-600 dark:text-gray-400">
                         {safeField.type} • {safeField.required && safeField.type !== 'checkbox' ? 'Required' : 'Optional'}
-                        {safeField.localStorage && ' • Auto-save enabled'}
+                        {hasLocalStorage && ' • Auto-save enabled'}
                       </CardDescription>
                     </div>
                   </div>
@@ -606,7 +719,7 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
           className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 border-transparent"
           size="lg"
         >
-          Clear Saved
+          Clear All Saved Data
         </Button>
       </div>
     </div>

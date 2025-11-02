@@ -1,4 +1,5 @@
 export interface TemplateField {
+  value: any;
   rows: number;
   id: string;
   type: 'text' | 'textarea' | 'date' | 'select' | 'list' | 'checkbox';
@@ -15,6 +16,7 @@ export interface TemplateField {
   saveToLocal?: boolean;
   // BBCode formatting - make it consistent
   bbcodeFormat?: BBCodeFormat;
+  localStorage?: boolean;
 }
 
 // Add proper BBCodeFormat interface

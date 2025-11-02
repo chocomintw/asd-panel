@@ -49,23 +49,23 @@ export function FieldEditor({ field, onUpdate }: FieldEditorProps) {
 
   // Default BBCode formats for each field type
   const getDefaultBBCodeFormat = (type: string): BBCodeFormat => {
-  switch (type) {
-    case 'text':
-      return { prefix: '', suffix: '' };
-    case 'textarea':
-      return { prefix: '', suffix: '\n' };
-    case 'date':
-      return { prefix: '', suffix: '' };
-    case 'select':
-      return { prefix: '', suffix: '' };
-    case 'checkbox':
-      return { prefix: '', suffix: '' };
-    case 'list':
-      return { prefix: '[list]\n', suffix: '\n[/list]' };
-    default:
-      return { prefix: '', suffix: '' };
-  }
-};
+    switch (type) {
+      case 'text':
+        return { prefix: '', suffix: '' };
+      case 'textarea':
+        return { prefix: '', suffix: '\n' };
+      case 'date':
+        return { prefix: '', suffix: '' };
+      case 'select':
+        return { prefix: '', suffix: '' };
+      case 'checkbox':
+        return { prefix: '', suffix: '' };
+      case 'list':
+        return { prefix: '[list]\n', suffix: '\n[/list]' };
+      default:
+        return { prefix: '', suffix: '' };
+    }
+  };
 
   const bbcodeFormat: BBCodeFormat = field.bbcodeFormat || getDefaultBBCodeFormat(field.type);
 
@@ -207,6 +207,7 @@ export function FieldEditor({ field, onUpdate }: FieldEditorProps) {
               placeholder="[cbc]"
               className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 font-mono"
             />
+            <p className="text-xs text-gray-500">Shows when checkbox is checked</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor={`${field.id}-unchecked`}>Unchecked Value</Label>
@@ -217,6 +218,7 @@ export function FieldEditor({ field, onUpdate }: FieldEditorProps) {
               placeholder="[cb]"
               className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 font-mono"
             />
+            <p className="text-xs text-gray-500">Shows when checkbox is unchecked</p>
           </div>
         </div>
       )}
@@ -304,16 +306,27 @@ export function FieldEditor({ field, onUpdate }: FieldEditorProps) {
       {/* BBCode Preview */}
       <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded border border-gray-200 dark:border-gray-700">
         <Label className="text-sm font-medium mb-2 block">BBCode Preview</Label>
-        <pre className="text-xs bg-white dark:bg-gray-900 p-2 rounded border font-mono whitespace-pre-wrap">
-          {generateBBCodePreview(field, bbcodeFormat)}
-        </pre>
+        <div className="space-y-2">
+          <div>
+            <Label className="text-xs text-gray-500">Placeholder:</Label>
+            <pre className="text-xs bg-white dark:bg-gray-900 p-2 rounded border font-mono whitespace-pre-wrap">
+              {generateBBCodePlaceholder(field, bbcodeFormat)}
+            </pre>
+          </div>
+          <div>
+            <Label className="text-xs text-gray-500">Example Output:</Label>
+            <pre className="text-xs bg-green-50 dark:bg-green-900/20 p-2 rounded border font-mono whitespace-pre-wrap">
+              {generateBBCodeExample(field, bbcodeFormat)}
+            </pre>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-// Helper function to generate BBCode preview
-function generateBBCodePreview(field: TemplateField, bbcodeFormat: BBCodeFormat): string {
+// Helper function to generate BBCode placeholder
+function generateBBCodePlaceholder(field: TemplateField, bbcodeFormat: BBCodeFormat): string {
   const { prefix = '', suffix = '', wrapInTag = '' } = bbcodeFormat;
   
   let content = `{{${field.type}:${field.name}}}`;
@@ -327,3 +340,39 @@ function generateBBCodePreview(field: TemplateField, bbcodeFormat: BBCodeFormat)
   
   return `${prefix}${content}${suffix}`;
 }
+
+// Helper function to generate BBCode example with actual values
+function generateBBCodeExample(field: TemplateField, bbcodeFormat: BBCodeFormat): string {
+  const { prefix = '', suffix = '', wrapInTag = '' } = bbcodeFormat;
+  
+  let content = getFieldExampleValue(field);
+  
+  if (wrapInTag) {
+    const tagParts = wrapInTag.split('=');
+    const tagName = tagParts[0];
+    const attributes = tagParts[1] ? `=${tagParts[1]}` : '';
+    content = `[${tagName}${attributes}]${content}[/${tagName}]`;
+  }
+  
+  return `${prefix}${content}${suffix}`;
+}
+
+// Helper function to get example values for each field type
+  function getFieldExampleValue(field: TemplateField): string {
+    switch (field.type) {
+      case 'text':
+        return 'Sample Text';
+      case 'textarea':
+        return 'Multi-line\ntext example';
+      case 'date':
+        return new Date().toISOString().split('T')[0];
+      case 'select':
+        return field.options?.[0] || 'Selected Option';
+      case 'checkbox':
+        return field.checkedValue || '[cbc]';
+      case 'list':
+        return 'First Item\n[*]Second Item\n[*]Third Item'; // Fixed list format
+      default:
+        return 'Field Value';
+    }
+  }

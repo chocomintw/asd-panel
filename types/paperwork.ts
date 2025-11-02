@@ -29,3 +29,22 @@ export interface SelectOption {
 export interface FormValues {
   [key: string]: string | string[]
 }
+
+export interface TemplateField {
+  id: string;
+  name: string;
+  type: 'text' | 'textarea' | 'date' | 'select' | 'checkbox' | 'list';
+  label: string;
+  required?: boolean;
+  placeholder?: string;
+  defaultValue?: string;
+  options?: string[];
+  rows?: number;
+  checkedValue?: string;
+  uncheckedValue?: string;
+  bbcodeFormat?: {
+    prefix?: string;
+    suffix?: string;
+    wrapInTag?: string;
+  };
+}

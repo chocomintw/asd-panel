@@ -13,9 +13,6 @@ interface TemplatePreviewProps {
   onUpdateTemplate: (template: PaperworkTemplate) => void;
   onDownload: () => void;
   onSave: () => void;
-  // Remove these since lists are dynamic now
-  // onAddListItem: (listField: TemplateField) => void;
-  // onRemoveListItem: (listField: TemplateField, itemId: string) => void;
 }
 
 export function TemplatePreview({
@@ -24,7 +21,6 @@ export function TemplatePreview({
   onUpdateTemplate,
   onDownload,
   onSave,
-  // Remove from destructuring
 }: TemplatePreviewProps) {
   const updateField = (fieldId: string, updates: Partial<TemplateField>) => {
     if (!template) return;
@@ -121,20 +117,28 @@ export function TemplatePreview({
           />
         </div>
 
-        <div className="border rounded-lg p-4 backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 border-transparent">
+        {/* Fixed: Show ALL fields with proper scrolling */}
+        <div className="border rounded-lg p-4 bg-white/40 dark:bg-gray-800/40 border-transparent">
           <h4 className="font-semibold mb-3 flex items-center justify-between">
             <span>Form Fields ({template.fields.length})</span>
             <Edit className="h-4 w-4 text-gray-500" />
           </h4>
-          <div className="space-y-4 max-h-96 overflow-y-auto">
-            {template.fields.map((field) => (
-              <FieldEditor
-                key={field.id}
-                field={field}
-                onUpdate={(updates) => updateField(field.id, updates)}
-                // Don't pass these props since lists are dynamic
-              />
-            ))}
+          <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+            {template.fields.length > 0 ? (
+              template.fields.map((field) => (
+                <div key={field.id} className="relative">
+                  <FieldEditor
+                    field={field}
+                    onUpdate={(updates) => updateField(field.id, updates)}
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-4 text-muted-foreground">
+                <p>No fields generated yet</p>
+                <p className="text-sm">Add fields to your BBCode template and click "Generate Template"</p>
+              </div>
+            )}
           </div>
         </div>
 

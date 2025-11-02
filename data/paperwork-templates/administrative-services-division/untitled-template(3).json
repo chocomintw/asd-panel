@@ -1,0 +1,131 @@
+{
+  "id": "untitled-template",
+  "name": "Untitled Template",
+  "description": "Template generated from BBCode editor",
+  "category": "training-bureau",
+  "fields": [
+    {
+      "id": "this_is_a_text_input",
+      "type": "text",
+      "name": "This is a text input",
+      "label": "This is a text input",
+      "required": true,
+      "placeholder": "Enter This is a text input",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0
+    },
+    {
+      "id": "this_is_a_text_area",
+      "type": "textarea",
+      "name": "This is a text area",
+      "label": "This is a text area",
+      "required": true,
+      "placeholder": "Enter This is a text area",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": "\n"
+      },
+      "rows": 4
+    },
+    {
+      "id": "this_is_a_datepicker",
+      "type": "date",
+      "name": "This is a datepicker",
+      "label": "This is a datepicker",
+      "required": true,
+      "placeholder": "Enter This is a datepicker",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "dateFormat": "MMMM DD, YYYY"
+    },
+    {
+      "id": "this_is_a_dropdown",
+      "type": "select",
+      "name": "This is a dropdown",
+      "label": "This is a dropdown",
+      "required": true,
+      "placeholder": "Enter This is a dropdown",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "options": [
+        "Option 1",
+        "Option 2",
+        "Option 3"
+      ],
+      "dataSource": "custom"
+    },
+    {
+      "id": "this_is_a_checkbox",
+      "type": "checkbox",
+      "name": "This is a checkbox",
+      "label": "This is a checkbox",
+      "required": true,
+      "placeholder": "Enter This is a checkbox",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "checkedValue": "[cbc]",
+      "uncheckedValue": "[cb]"
+    },
+    {
+      "id": "this_is_a_dynamic_list",
+      "type": "list",
+      "name": "This is a dynamic list",
+      "label": "This is a dynamic list",
+      "required": true,
+      "placeholder": "Enter This is a dynamic list",
+      "bbcodeFormat": {
+        "prefix": "[list]",
+        "suffix": "[/list]"
+      },
+      "rows": 0
+    },
+    {
+      "id": "this_is_a_text_input_saved_to_local_storage",
+      "type": "text",
+      "name": "this is a text input saved to local storage",
+      "label": "This is a text input saved to local storage",
+      "required": true,
+      "placeholder": "Enter this is a text input saved to local storage",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "saveToLocal": true
+    },
+    {
+      "id": "this_is_a_textarea_saved_to_local_storage",
+      "type": "textarea",
+      "name": "This is a textarea saved to local storage",
+      "label": "This is a textarea saved to local storage",
+      "required": true,
+      "placeholder": "Enter This is a textarea saved to local storage",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": "\n"
+      },
+      "rows": 4,
+      "saveToLocal": true
+    }
+  ],
+  "template": "{{text:This is a text input}}\n{{textarea:This is a text area}}\n{{date:This is a datepicker}}\n{{select:This is a dropdown}}\n{{checkbox:This is a checkbox}}\n{{list:This is a dynamic list}}\n\n{{text:this is a text input saved to local storage}}\n{{textarea:This is a textarea saved to local storage}}",
+  "version": "1.0",
+  "author": "ASD Panel",
+  "created": "2025-11-02",
+  "formConfig": {
+    "layout": "vertical",
+    "submitText": "Generate Document"
+  }
+}

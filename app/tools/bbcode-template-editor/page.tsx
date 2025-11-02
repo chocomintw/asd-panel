@@ -9,12 +9,13 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Upload, Code, ArrowUpRight } from 'lucide-react'
 
-import { PaperworkTemplate, TemplateField, ValidationResult } from './types'
+import { PaperworkTemplate, TemplateField, ValidationResult, BBCodeFormat } from './types'
 import { validateTemplateStructure, validateJSON } from './validation'
 import { FieldToolbar } from './field-toolbar'
 import { TemplatePreview } from './template-preview'
 import { ValidationStatus } from './validation-status'
 import { SyntaxHelp } from './syntax-help'
+import { BBCodePreview } from './bbcode-preview';
 
 export default function BBCodeTemplateEditor() {
   const [bbcodeContent, setBBCodeContent] = useState('')
@@ -51,7 +52,7 @@ export default function BBCodeTemplateEditor() {
   };
 
   // Fixed generateTemplate function
-const generateTemplate = async () => {
+  const generateTemplate = async () => {
   setIsGenerating(true);
   
   try {
@@ -60,6 +61,9 @@ const generateTemplate = async () => {
     const fields: TemplateField[] = [];
     let match;
 
+    // Reset regex lastIndex to ensure we find all matches
+    fieldRegex.lastIndex = 0;
+    
     while ((match = fieldRegex.exec(bbcodeContent)) !== null) {
       const [, fieldType, fieldName] = match;
       
@@ -100,10 +104,15 @@ const generateTemplate = async () => {
         case 'date':
           field.dateFormat = 'YYYY-MM-DD';
           break;
+        case 'list':
+          // Lists are dynamic - no special configuration needed
+          break;
       }
 
       fields.push(field);
     }
+
+    console.log(`Generated ${fields.length} fields:`, fields.map(f => `${f.type}:${f.name}`));
 
     // Create valid template
     const newTemplate: PaperworkTemplate = {
@@ -141,26 +150,26 @@ const generateTemplate = async () => {
   } finally {
     setIsGenerating(false);
   }
-};
+  };
 
-// Helper function for default BBCode formats
-const getDefaultBBCodeFormat = (type: string) => {
-  switch (type) {
-    case 'text':
-      return { prefix: '', suffix: '' };
-    case 'textarea':
-      return { prefix: '', suffix: '\n' };
-    case 'date':
-      return { prefix: '', suffix: '' };
-    case 'select':
-      return { prefix: '', suffix: '' };
-    case 'checkbox':
-      return { prefix: '', suffix: '' };
-    case 'list':
-      return { prefix: '[list]\n', suffix: '\n[/list]' };
-    default:
-      return { prefix: '', suffix: '' };
-  }
+  // Helper function for default BBCode formats
+  const getDefaultBBCodeFormat = (type: string): BBCodeFormat => {
+    switch (type) {
+      case 'text':
+        return { prefix: '', suffix: '' };
+      case 'textarea':
+        return { prefix: '', suffix: '\n' };
+      case 'date':
+        return { prefix: '', suffix: '' };
+      case 'select':
+        return { prefix: '', suffix: '' };
+      case 'checkbox':
+        return { prefix: '', suffix: '' };
+      case 'list':
+        return { prefix: '[list]', suffix: '[/list]' }; // Fixed format
+      default:
+        return { prefix: '', suffix: '' };
+    }
   };
 
   const downloadTemplate = () => {
@@ -454,6 +463,11 @@ List items (dynamic):
             onDownload={downloadTemplate}
             onSave={saveToPaperworkGenerators}
           />
+        </div>
+
+        {/* BBCode Output Preview - Moved outside the grid */}
+        <div className="mt-6">
+          <BBCodePreview template={template} bbcodeContent={bbcodeContent} />
         </div>
 
         {/* Syntax Help */}

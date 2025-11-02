@@ -115,3 +115,22 @@ export const dateFormats = [
   'MMMM DD, YYYY',
   'DD MMMM YYYY'
 ];
+
+export const getDefaultBBCodeFormat = (type: string): BBCodeFormat => {
+  switch (type) {
+    case 'text':
+      return { prefix: '', suffix: '' };
+    case 'textarea':
+      return { prefix: '', suffix: '\n' };
+    case 'date':
+      return { prefix: '', suffix: '' };
+    case 'select':
+      return { prefix: '', suffix: '' };
+    case 'checkbox':
+      return { prefix: '', suffix: '' };
+    case 'list':
+      return { prefix: '[list]', suffix: '[/list]' }; // Fixed format
+    default:
+      return { prefix: '', suffix: '' };
+  }
+};

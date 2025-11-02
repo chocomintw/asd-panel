@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { DynamicFormRenderer } from '@/components/paperwork/dynamic-form-renderer'
-import { OutputPreview } from '@/components/paperwork/output-preview'
+import { BBCodeFormRenderer } from '@/components/paperwork/bbcode-form-renderer'
+import { BBCodeOutputPreview } from '@/components/paperwork/bbcode-output-preview'
 import { PaperworkTemplate } from '@/types/paperwork'
 import { notFound, useParams } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -161,10 +161,10 @@ export default function TemplatePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <DynamicFormRenderer 
-                  template={template}
-                  onGenerate={handleGenerate}
-                />
+                  <BBCodeFormRenderer 
+                    template={template}
+                    onGenerate={handleGenerate}
+                  />
               </CardContent>
             </Card>
 
@@ -206,7 +206,7 @@ export default function TemplatePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <OutputPreview output={generatedOutput} />
+                <BBCodeOutputPreview output={generatedOutput} />
               </CardContent>
             </Card>
 

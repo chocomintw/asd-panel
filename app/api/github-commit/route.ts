@@ -5,7 +5,7 @@ export async function GET() {
   try {
     console.log('Fetching GitHub commit info...')
     
-    const response = await fetch('https://api.github.com/repos/chocomintw/asd-panel/commits/main', {
+    const response = await fetch('https://api.github.com/repos/chocomintw/asd-panel/commits/master', {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': 'ASD-Panel-App'

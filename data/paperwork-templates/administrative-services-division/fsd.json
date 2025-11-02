@@ -1,0 +1,174 @@
+{
+  "id": "fsd",
+  "name": "fsd",
+  "description": "fsd",
+  "category": "training-bureau",
+  "fields": [
+    {
+      "id": "text_input_here",
+      "type": "text",
+      "name": "text input here",
+      "label": "Text input here",
+      "required": true,
+      "placeholder": "Enter text input here"
+    },
+    {
+      "id": "text_area_here",
+      "type": "textarea",
+      "name": "text area here",
+      "label": "Text area here",
+      "required": true,
+      "placeholder": "Enter text area here",
+      "rows": 4
+    },
+    {
+      "id": "date_picker",
+      "type": "date",
+      "name": "date picker",
+      "label": "Date picker",
+      "required": true,
+      "placeholder": "Enter date picker",
+      "dateFormat": "YYYY-MM-DD"
+    },
+    {
+      "id": "date___time__custom_",
+      "type": "datetime",
+      "name": "date & time (custom)",
+      "label": "Date & time (custom)",
+      "required": true,
+      "placeholder": "Enter date & time (custom)",
+      "dateFormat": "YYYY-MM-DD",
+      "timeFormat": "HH:mm"
+    },
+    {
+      "id": "time_input",
+      "type": "time",
+      "name": "time input",
+      "label": "Time input",
+      "required": true,
+      "placeholder": "Enter time input",
+      "timeFormat": "HH:mm"
+    },
+    {
+      "id": "url_input",
+      "type": "url",
+      "name": "url input",
+      "label": "Url input",
+      "required": true,
+      "placeholder": "Enter url input"
+    },
+    {
+      "id": "dropdown",
+      "type": "select",
+      "name": "dropdown",
+      "label": "Dropdown",
+      "required": true,
+      "placeholder": "Enter dropdown",
+      "options": [
+        "Option 1",
+        "Option 2",
+        "Option 3"
+      ],
+      "dataSource": "custom"
+    },
+    {
+      "id": "checkbox",
+      "type": "checkbox",
+      "name": "checkbox",
+      "label": "Checkbox",
+      "required": true,
+      "placeholder": "Enter checkbox",
+      "checkedValue": "[cbc]",
+      "uncheckedValue": "[cb]"
+    },
+    {
+      "id": "bullet_list",
+      "type": "list",
+      "name": "bullet list",
+      "label": "Bullet list",
+      "required": true,
+      "placeholder": "Enter bullet list",
+      "listType": "bullet",
+      "items": [
+        {
+          "id": "item_1",
+          "type": "list_item",
+          "name": "bullet list:item_1",
+          "label": "Item 1",
+          "required": false,
+          "placeholder": "Enter list item"
+        },
+        {
+          "id": "item_2",
+          "type": "list_item",
+          "name": "bullet list:item_2",
+          "label": "Item 2",
+          "required": false,
+          "placeholder": "Enter list item"
+        }
+      ]
+    },
+    {
+      "id": "numbered_list",
+      "type": "list",
+      "name": "numbered list",
+      "label": "Numbered list",
+      "required": true,
+      "placeholder": "Enter numbered list",
+      "listType": "numbered",
+      "items": [
+        {
+          "id": "item_1",
+          "type": "list_item",
+          "name": "numbered list:item_1",
+          "label": "Item 1",
+          "required": false,
+          "placeholder": "Enter list item"
+        },
+        {
+          "id": "item_2",
+          "type": "list_item",
+          "name": "numbered list:item_2",
+          "label": "Item 2",
+          "required": false,
+          "placeholder": "Enter list item"
+        }
+      ]
+    },
+    {
+      "id": "checklist",
+      "type": "list",
+      "name": "checklist",
+      "label": "Checklist",
+      "required": true,
+      "placeholder": "Enter checklist",
+      "listType": "checkbox",
+      "items": [
+        {
+          "id": "item_1",
+          "type": "list_item",
+          "name": "checklist:item_1",
+          "label": "Item 1",
+          "required": false,
+          "placeholder": "Enter list item"
+        },
+        {
+          "id": "item_2",
+          "type": "list_item",
+          "name": "checklist:item_2",
+          "label": "Item 2",
+          "required": false,
+          "placeholder": "Enter list item"
+        }
+      ]
+    }
+  ],
+  "template": "{{text:text input here}}\n\n{{textarea:text area here}}\n\n{{date:date picker}}\n\n{{datetime:date & time (custom)}}\n\n{{time:time input}}\n\n{{url:url input}}\n\n{{select:dropdown}}\n\n{{checkbox:checkbox}}\n\n{{list:bullet list:bullet}}\n\n{{list:numbered list:numbered}}\n\n{{list:checklist:checkbox}}\n{{list_item:bullet list:item_1}}\n{{list_item:bullet list:item_2}}\n{{list_item:numbered list:item_1}}\n{{list_item:checklist:item_1}}\n{{list_item:numbered list:item_2}}\n{{list_item:checklist:item_2}}",
+  "version": "1.0",
+  "author": "ASD Panel",
+  "created": "2025-11-02",
+  "formConfig": {
+    "layout": "vertical",
+    "submitText": "Generate Document"
+  }
+}

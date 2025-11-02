@@ -1,0 +1,80 @@
+{
+  "id": "untitled-template",
+  "name": "Untitled Template",
+  "description": "Template generated from BBCode editor",
+  "category": "training-bureau",
+  "fields": [
+    {
+      "id": "field_1762053930988",
+      "type": "select",
+      "name": "Fire",
+      "label": "This is pretty cool",
+      "required": false,
+      "placeholder": "Yeah",
+      "rows": 0,
+      "options": [
+        "Fortnite",
+        "I love",
+        "Men"
+      ],
+      "dataSource": "custom"
+    },
+    {
+      "id": "field_1762053933637",
+      "type": "date",
+      "name": "Time with proper format",
+      "label": "Time with proper format",
+      "required": true,
+      "placeholder": "Time with proper format",
+      "rows": 0,
+      "dateFormat": "MMMM DD, YYYY"
+    },
+    {
+      "id": "field_1762053934725",
+      "type": "textarea",
+      "name": "field_1762053934725",
+      "label": "Textarea local storage",
+      "required": true,
+      "placeholder": "Enter field 1762053934725",
+      "rows": 4,
+      "saveToLocal": true
+    },
+    {
+      "id": "field_1762053935831",
+      "type": "text",
+      "name": "field_1762053935831",
+      "label": "Field 1762053935831",
+      "required": true,
+      "placeholder": "Enter field 1762053935831",
+      "rows": 0
+    },
+    {
+      "id": "field_1762053936949",
+      "type": "checkbox",
+      "name": "field_1762053936949",
+      "label": "Field 1762053936949",
+      "required": true,
+      "placeholder": "Enter field 1762053936949",
+      "rows": 0,
+      "checkedValue": "[cbc]",
+      "uncheckedValue": "[cb]"
+    },
+    {
+      "id": "field_1762053938118",
+      "type": "list",
+      "name": "field_1762053938118",
+      "label": "Field 1762053938118",
+      "required": true,
+      "placeholder": "Enter field 1762053938118",
+      "rows": 0
+    }
+  ],
+  "template": "{{select:field_1762053930988}}\n{{date:field_1762053933637}}\n{{textarea:field_1762053934725}}\n{{text:field_1762053935831}}\n{{checkbox:field_1762053936949}}\n{{list:field_1762053938118}}",
+  "version": "1.0",
+  "author": "ASD Panel",
+  "created": "2025-11-02",
+  "formConfig": {
+    "layout": "vertical",
+    "submitText": "Generate Document"
+  }
+}

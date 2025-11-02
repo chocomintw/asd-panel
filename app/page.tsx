@@ -183,7 +183,7 @@ export default function Dashboard() {
           
           <div className="relative">
             <Badge variant="secondary" className="mb-4 animate-fade-in backdrop-blur-sm bg-white/60 dark:bg-gray-900/60 border border-transparent shadow-sm">
-              👋 Welcome back
+              <span className="text-gray-900 dark:text-white">👋 Welcome back</span>
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-linear-to-br from-gray-900 via-gray-800 to-gray-700 dark:from-white dark:via-gray-200 dark:to-gray-400 bg-clip-text text-transparent">
               Hello, {user?.displayName || 'User'}!
@@ -284,7 +284,7 @@ export default function Dashboard() {
               <Icons.Grid className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               All Tools
               <Badge variant="secondary" className="ml-2 backdrop-blur-sm bg-white/60 dark:bg-gray-900/60 border border-transparent">
-                {regularCards.length}
+               <span className="text-gray-900 dark:text-white">{regularCards.length}</span>
               </Badge>
             </h2>
           </div>

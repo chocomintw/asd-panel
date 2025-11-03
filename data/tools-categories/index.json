@@ -22,5 +22,13 @@
   "description": "Create dynamic paperwork templates with form fields",
   "icon": "📝",
   "category": "Template Creation"
+  },
+  {
+    "id": "station-assignment",
+    "folder": "station-assignment",
+    "title": "Station Assignments",
+    "description": "Manage station assignments without having to do it yourself.",
+    "icon": "🧑‍💼",
+    "category": "Station Assignment Mangement"
   }
 ]

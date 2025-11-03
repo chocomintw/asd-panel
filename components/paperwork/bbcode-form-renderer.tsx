@@ -279,142 +279,140 @@ export function BBCodeFormRenderer({ template, onGenerate }: BBCodeFormRendererP
   }
 
   const generateBBCode = () => {
-    let output = template.template || ''
+  let output = template.template || ''
 
-    // Create a mapping of field identifiers to field objects
-    const fieldMap = new Map()
+  // Create a mapping of field identifiers to field objects
+  const fieldMap = new Map()
+  
+  template.fields?.forEach(field => {
+    const safeField = field as SafeFormField
     
-    template.fields?.forEach(field => {
-      const safeField = field as SafeFormField
-      
-      // Map by field ID (without 'field_' prefix)
-      const fieldId = safeField.id.replace('field_', '')
-      fieldMap.set(fieldId, safeField)
-      
-      // Map by field name (lowercase for case-insensitive matching)
-      fieldMap.set(safeField.name.toLowerCase(), safeField)
-      
-      // Map by full field ID
-      fieldMap.set(safeField.id, safeField)
-    })
-
-    // Process each unique placeholder only once
-    const processedPlaceholders = new Set()
+    // Map by full field ID
+    fieldMap.set(safeField.id, safeField)
     
-    // Use a while loop to find and replace placeholders one by one
-    let placeholderMatch
-    const placeholderRegex = /\{\{[^}]+\}\}/g
+    // Map by field name (exact match only)
+    fieldMap.set(safeField.name, safeField)
     
-    while ((placeholderMatch = placeholderRegex.exec(output)) !== null) {
-      const placeholder = placeholderMatch[0]
-      
-      // Skip if we've already processed this exact placeholder
-      if (processedPlaceholders.has(placeholder)) {
-        continue
-      }
+    // Map by placeholder patterns
+    fieldMap.set(`text:${safeField.name}`, safeField)
+    fieldMap.set(`select:${safeField.name}`, safeField)
+    fieldMap.set(`textarea:${safeField.name}`, safeField)
+    fieldMap.set(`date:${safeField.name}`, safeField)
+    fieldMap.set(`checkbox:${safeField.name}`, safeField)
+    fieldMap.set(`list:${safeField.name}`, safeField)
+    fieldMap.set(`url:${safeField.name}`, safeField)
+  })
 
-      const content = placeholder.replace('{{', '').replace('}}', '')
-      
-      let field: SafeFormField | undefined
-      let value = ''
-
-      for (const [key, fieldObj] of fieldMap) {
-        if (content.includes(key)) {
-          field = fieldObj
-          break
-        }
-      }
-
-      if (!field) {
-        const parts = content.split(':')
-        if (parts.length === 2) {
-          const [type, identifier] = parts
-          field = fieldMap.get(identifier) || fieldMap.get(identifier.toLowerCase())
-        } else {
-          field = fieldMap.get(content) || fieldMap.get(content.toLowerCase())
-        }
-      }
-
-      if (field) {
-        console.log(`🔧 Processing field "${field.name}" for placeholder "${placeholder}"`)
-        
-        switch (field.type) {
-          case 'text':
-          case 'textarea':
-          case 'url':
-            value = formData[field.name] || ''
-            console.log(`   - Text value: "${value}"`)
-            break
-          
-          case 'date':
-            if (formData[field.name]) {
-              try {
-                const date = new Date(formData[field.name])
-                value = format(date, 'MMMM dd, yyyy')
-                console.log(`   - Date value: "${value}"`)
-              } catch (error) {
-                value = formData[field.name] || ''
-              }
-            }
-            break
-          
-          case 'select':
-            value = formData[field.name] || ''
-            console.log(`   - Select value: "${value}"`)
-            break
-          
-          case 'checkbox':
-            value = formData[field.name] ? 
-              (field.checkedValue || '[cbc]') : 
-              (field.uncheckedValue || '[cb]')
-            console.log(`   - Checkbox value: "${value}" (checked: ${formData[field.name]})`)
-            break
-          
-          case 'list':
-            const items = listItems[field.name]?.filter(item => item.trim()) || []
-            if (items.length > 0) {
-              // Create proper BBCode list format - NO [list] tags here!
-              value = items.map(item => `[*]${item}`).join('')
-              console.log(`   - List value: "${value}"`)
-            } else {
-              value = ''
-            }
-            break
-          
-          default:
-            value = ''
-        }
-
-        // Apply BBCode formatting if the field has bbcodeFormat
-        if (field.bbcodeFormat) {
-          const { prefix = '', suffix = '', wrapInTag = '' } = field.bbcodeFormat
-          
-          if (wrapInTag) {
-            const tagParts = wrapInTag.split('=')
-            const tagName = tagParts[0]
-            const attributes = tagParts[1] ? `=${tagParts[1]}` : ''
-            value = `[${tagName}${attributes}]${value}[/${tagName}]`
-          }
-          
-          value = `${prefix}${value}${suffix}`
-        }
-
-        // Replace ALL instances of this placeholder in the output
-        const originalOutput = output
-        output = output.replace(new RegExp(placeholder, 'g'), value)
-        console.log(`   - Replaced "${placeholder}" with "${value}"`)
-        console.log(`   - Output changed: ${originalOutput !== output}`)
-        
-        // Mark this placeholder as processed
-        processedPlaceholders.add(placeholder)
-        
-        // Reset the regex since we modified the string
-        placeholderRegex.lastIndex = 0
-      }
+  // Process each unique placeholder only once
+  const processedPlaceholders = new Set()
+  
+  // Use a while loop to find and replace placeholders one by one
+  let placeholderMatch
+  const placeholderRegex = /\{\{[^}]+\}\}/g
+  
+  while ((placeholderMatch = placeholderRegex.exec(output)) !== null) {
+    const placeholder = placeholderMatch[0]
+    
+    // Skip if we've already processed this exact placeholder
+    if (processedPlaceholders.has(placeholder)) {
+      continue
     }
 
-    console.log('🎉 Final BBCode output:', output)
-    onGenerate(output)
+    const content = placeholder.replace('{{', '').replace('}}', '')
+    
+    let field: SafeFormField | undefined
+    let value = ''
+
+    // Try exact matches first
+    field = fieldMap.get(content) // Try exact content match
+    
+    // If no exact match, try type:name format
+    if (!field && content.includes(':')) {
+      field = fieldMap.get(content) // This will match "select:Rank" exactly
+    }
+    
+    // If still no match, try field name only (as fallback)
+    if (!field) {
+      field = fieldMap.get(content) // Try content as field name
+    }
+
+    if (field) {
+      console.log(`🔧 Processing field "${field.name}" (type: ${field.type}) for placeholder "${placeholder}"`)
+      
+      switch (field.type) {
+        case 'text':
+        case 'textarea':
+        case 'url':
+          value = formData[field.name] || ''
+          break
+        
+        case 'date':
+          if (formData[field.name]) {
+            try {
+              const date = new Date(formData[field.name])
+              value = format(date, 'MMMM dd, yyyy')
+            } catch (error) {
+              value = formData[field.name] || ''
+            }
+          }
+          break
+        
+        case 'select':
+          value = formData[field.name] || ''
+          break
+        
+        case 'checkbox':
+          value = formData[field.name] ? 
+            (field.checkedValue || '[cbc]') : 
+            (field.uncheckedValue || '[cb]')
+          break
+        
+        case 'list':
+          const items = listItems[field.name]?.filter(item => item.trim()) || []
+          if (items.length > 0) {
+            // Create proper BBCode list format - NO [list] tags here!
+            value = items.map(item => `${item}`).join('\n[*]')
+          } else {
+            value = ''
+          }
+          break
+        
+        default:
+          value = ''
+      }
+
+      // Apply BBCode formatting if the field has bbcodeFormat
+      if (field.bbcodeFormat) {
+        const { prefix = '', suffix = '', wrapInTag = '' } = field.bbcodeFormat
+        
+        if (wrapInTag) {
+          const tagParts = wrapInTag.split('=')
+          const tagName = tagParts[0]
+          const attributes = tagParts[1] ? `=${tagParts[1]}` : ''
+          value = `[${tagName}${attributes}]${value}[/${tagName}]`
+        }
+        
+        value = `${prefix}${value}${suffix}`
+      }
+
+      // Replace ALL instances of this placeholder in the output
+      const originalOutput = output
+      output = output.replace(new RegExp(placeholder, 'g'), value)
+      console.log(`   - Replaced "${placeholder}" with "${value}"`)
+      console.log(`   - Output changed: ${originalOutput !== output}`)
+      
+      // Mark this placeholder as processed
+      processedPlaceholders.add(placeholder)
+      
+      // Reset the regex since we modified the string
+      placeholderRegex.lastIndex = 0
+    } else {
+      console.log(`❌ No field found for placeholder: "${placeholder}"`)
+    }
+  }
+
+  console.log('🎉 Final BBCode output:', output)
+  onGenerate(output)
   }
 
   const getFieldIcon = (type: string) => {

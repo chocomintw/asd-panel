@@ -1,0 +1,111 @@
+{
+  "id": "reinstatement-received",
+  "name": "Reinstatement Received",
+  "description": "Format for Reinstatement to notify the author it has been forwarded.",
+  "category": "administrative-services-division",
+  "fields": [
+    {
+      "id": "mr__ms__mrs__lastname",
+      "type": "text",
+      "name": "Mr./Ms./Mrs. Lastname",
+      "label": "Mr./Ms./Mrs. Lastname",
+      "required": true,
+      "placeholder": "Enter Mr./Ms./Mrs. Lastname",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": "",
+      "defaultValue": "",
+      "localStorage": false
+    },
+    {
+      "id": "signature_image_link",
+      "type": "text",
+      "name": "Signature Image Link",
+      "label": "Signature Image Link",
+      "required": true,
+      "placeholder": "Enter Signature Image Link",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": {
+        "value": "",
+        "fieldName": "Signature Image Link",
+        "fieldType": "text",
+        "savedAt": "2025-11-03T15:09:09.429Z"
+      },
+      "defaultValue": "",
+      "localStorage": true
+    },
+    {
+      "id": "firstname_lastname",
+      "type": "text",
+      "name": "Firstname Lastname",
+      "label": "Firstname Lastname",
+      "required": true,
+      "placeholder": "Enter Firstname Lastname",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": {
+        "value": "",
+        "fieldName": "Firstname Lastname",
+        "fieldType": "text",
+        "savedAt": "2025-11-03T15:09:09.429Z"
+      },
+      "defaultValue": "",
+      "localStorage": true
+    },
+    {
+      "id": "rank",
+      "type": "text",
+      "name": "Rank",
+      "label": "Rank",
+      "required": true,
+      "placeholder": "Enter Rank",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": {
+        "value": "",
+        "fieldName": "Rank",
+        "fieldType": "text",
+        "savedAt": "2025-11-03T15:09:09.429Z"
+      },
+      "defaultValue": "",
+      "localStorage": true
+    },
+    {
+      "id": "unit_of_assignment",
+      "type": "text",
+      "name": "Unit of Assignment",
+      "label": "Unit of Assignment",
+      "required": true,
+      "placeholder": "Enter Unit of Assignment",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": "",
+      "defaultValue": "",
+      "localStorage": true
+    }
+  ],
+  "template": "[letterhead]Dear {{text:Mr./Ms./Mrs. Lastname}}:\n\n\n[center][b]REINSTATEMENT REQUEST RECEIVED[/b][/center]\n\n\nThis letter is in response to your request for reinstatement to the Los Santos County Sheriff's Department. We are informing you that your request has been acknowledged and forwarded to the Department's Command Staff for review, deliberation, and conclusion.\n\nThe deliberation will include a thorough examination of your previous service with the Department and personal background information. While exigent circumstances may preclude a fixed time frame, you should expect a response to your request within 72 hours.\n\nShould you have any questions or require additional information, please contact the undersigned official indicated at the bottom of this letter.\n\nSincerely,\n\nGRANT MENDEZ, SHERIFF\n[imgmw=125]{{text:Signature Image Link}}[/imgmw]\n{{text:Firstname Lastname}}, {{text:Rank}}\n{{text:Unit of Assignment}}[/letterhead]",
+  "version": "1.0",
+  "author": "ASD Panel",
+  "created": "2025-11-03",
+  "formConfig": {
+    "layout": "vertical",
+    "submitText": "Generate Document"
+  }
+}

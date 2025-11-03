@@ -1,0 +1,108 @@
+{
+  "id": "notice-of-reinstatement",
+  "name": "Notice of Reinstatement",
+  "description": "Post this when reinstating someone.",
+  "category": "administrative-services-division",
+  "fields": [
+    {
+      "id": "firstname_lastname",
+      "type": "text",
+      "name": "Firstname Lastname",
+      "label": "Firstname Lastname",
+      "required": true,
+      "placeholder": "Enter Firstname Lastname",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": "",
+      "defaultValue": "",
+      "localStorage": false
+    },
+    {
+      "id": "rank",
+      "type": "text",
+      "name": "Rank",
+      "label": "Rank",
+      "required": true,
+      "placeholder": "Enter Rank",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": "",
+      "defaultValue": "",
+      "localStorage": false
+    },
+    {
+      "id": "appointed_rank",
+      "type": "select",
+      "name": "Appointed Rank",
+      "label": "Appointed Rank",
+      "required": true,
+      "placeholder": "Enter Appointed Rank",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": "",
+      "defaultValue": "",
+      "localStorage": false,
+      "options": [
+        "Deputy Sheriff",
+        "Sergeant",
+        "Lieutenant",
+        "Captain",
+        "Area Commander",
+        "Division Chief",
+        "Assistant Sheriff",
+        "Undersheriff",
+        "Sheriff"
+      ],
+      "dataSource": "custom"
+    },
+    {
+      "id": "position",
+      "type": "text",
+      "name": "Position",
+      "label": "Position",
+      "required": true,
+      "placeholder": "Enter Position",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": "",
+      "defaultValue": "",
+      "localStorage": false
+    },
+    {
+      "id": "unit_of_assignment",
+      "type": "text",
+      "name": "Unit of Assignment",
+      "label": "Unit of Assignment",
+      "required": true,
+      "placeholder": "Enter Unit of Assignment",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": "",
+      "defaultValue": "",
+      "localStorage": false
+    }
+  ],
+  "template": "[block=0,40,white,white][center][imgmh=150]https://i.imgur.com/iaZp7uU.png[/imgmh]\n\n[color=black][b]NOTICE OF REINSTATEMENT[/b][/center]\n\n\n[width=80,auto]\n[b]EMPLOYEE NAME & FORMER RANK:[/b] {{text:Firstname Lastname}}, {{text:Rank}}\n[b]APPOINTED RANK:[/b] {{select:Appointed Rank}}\n[b]ASSIGNMENT:[/b] {{text:Position}}, {{text:Unit of Assignment}}\n\n[/width][br][br][center][img]https://i.imgur.com/DsKIRPf.png[/img][/center][/color][/block]",
+  "version": "1.0",
+  "author": "ASD Panel",
+  "created": "2025-11-03",
+  "formConfig": {
+    "layout": "vertical",
+    "submitText": "Generate Document"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "id": "reinstatement-accepted",
+  "name": "Reinstatement Accepted",
+  "description": "Format for Reinstatement to notify the author it has been accepted.",
+  "category": "administrative-services-division",
+  "fields": [
+    {
+      "id": "mr__ms__mrs__lastname",
+      "type": "text",
+      "name": "Mr./Ms./Mrs. Lastname",
+      "label": "Mr./Ms./Mrs. Lastname",
+      "required": true,
+      "placeholder": "Enter Mr./Ms./Mrs. Lastname",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": "",
+      "defaultValue": "",
+      "localStorage": false
+    },
+    {
+      "id": "signature_image_link",
+      "type": "text",
+      "name": "Signature Image Link",
+      "label": "Signature Image Link",
+      "required": true,
+      "placeholder": "Enter Signature Image Link",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": "",
+      "defaultValue": "",
+      "localStorage": true
+    },
+    {
+      "id": "firstname_lastname",
+      "type": "text",
+      "name": "Firstname Lastname",
+      "label": "Firstname Lastname",
+      "required": true,
+      "placeholder": "Enter Firstname Lastname",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": "",
+      "defaultValue": "",
+      "localStorage": true
+    },
+    {
+      "id": "rank",
+      "type": "text",
+      "name": "Rank",
+      "label": "Rank",
+      "required": true,
+      "placeholder": "Enter Rank",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": "",
+      "defaultValue": "",
+      "localStorage": true
+    },
+    {
+      "id": "unit_of_assignment",
+      "type": "text",
+      "name": "Unit of Assignment",
+      "label": "Unit of Assignment",
+      "required": true,
+      "placeholder": "Enter Unit of Assignment",
+      "bbcodeFormat": {
+        "prefix": "",
+        "suffix": ""
+      },
+      "rows": 0,
+      "value": "",
+      "defaultValue": "",
+      "localStorage": true
+    }
+  ],
+  "template": "[letterhead]Dear {{text:Mr./Ms./Mrs. Lastname}}:\n\n[center][b]REINSTATEMENT ACCEPTANCE INFORMATION[/b][/center]\n\n\nAs you have completed the conditions attached to the previous employment offer, I would like to welcome you to the Los Santos County Sheriff's Department. Please do not hesitate to contact us if you require further information.\n\nPlease review, and sign (if indicated), the following:\n\n[list=none][*][url=https://lssd.gta.world/viewtopic.php?f=268&t=18792]The Sheriff's Reference Book[/url]; \n[*][url=https://lssd.gta.world/viewtopic.php?f=268&t=18790]The Manual of Policy and Procedures[/url], [b](([/b]\n[*][url=https://lssd.gta.world/viewtopic.php?f=268&t=18794]the OOC Manual of Policy and Procedures[/url];\n[*][url=https://lssd.gta.world/viewtopic.php?f=150&t=141]the employee acknowledgment of understanding[/url]; [b]))[/b]\n[*][url=https://lssd.gta.world/viewforum.php?f=139]Recent Field Operations Directives[/url]; and\n[*][url=https://lssd.gta.world/viewforum.php?f=1091]Request a patrol station assignment[/url].[/list]\n\n[b](([/b] Additionally, see the following topics for important OOC information:\n\n[list=none][*][url=https://lssd.gta.world/viewforum.php?f=1004]Our official faction lore[/url];\n[*][url=https://lssd.gta.world/viewtopic.php?f=504&t=191]OOC Meritocracy and IC Politics[/url];\n[*][url=https://lssd.gta.world/viewtopic.php?f=504&t=14953]Sheriff's Communications Center & You[/url];\n[*][url=https://lssd.gta.world/viewtopic.php?f=368&t=770]Random Police RP tips[/url]; and\n[*][url=https://lssd.gta.world/viewtopic.php?t=57455]Corruption Permission / Guide[/url]. [b]))[/b][/list]\n\nSincerely,\n\nGRANT MENDEZ, SHERIFF\n[imgmw=125]{{text:Signature Image Link}}[/imgmw]\n{{text:Firstname Lastname}}, {{text:Rank}}\n{{text:Unit of Assignment}}[/letterhead]",
+  "version": "1.0",
+  "author": "ASD Panel",
+  "created": "2025-11-03",
+  "formConfig": {
+    "layout": "vertical",
+    "submitText": "Generate Document"
+  }
+}

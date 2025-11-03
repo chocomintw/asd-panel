@@ -152,14 +152,7 @@ export function FieldEditor({ field, onUpdate }: FieldEditorProps) {
         </div>
       </div>
 
-      <div className="flex items-center space-x-2">
-        <Switch
-          checked={field.required || false}
-          onCheckedChange={(checked) => handleUpdate({ required: checked })}
-          className="data-[state=checked]:bg-blue-600"
-        />
-        <Label className="text-sm font-medium">Required Field</Label>
-      </div>
+
 
       {/* Type-specific configurations */}
       {field.type === 'textarea' && (
@@ -280,17 +273,6 @@ export function FieldEditor({ field, onUpdate }: FieldEditorProps) {
         </div>
       )}
 
-      {(field.type === 'text' || field.type === 'textarea') && (
-        <div className="flex items-center space-x-2">
-          <Switch
-            checked={field.saveToLocal || false}
-            onCheckedChange={(checked) => handleUpdate({ saveToLocal: checked })}
-            className="data-[state=checked]:bg-blue-600"
-          />
-          <Label className="text-sm font-medium">Save to Local Storage</Label>
-        </div>
-      )}
-
       {/* List fields are dynamic - no configuration needed */}
       {field.type === 'list' && (
         <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
@@ -298,7 +280,7 @@ export function FieldEditor({ field, onUpdate }: FieldEditorProps) {
             <strong>Dynamic List:</strong> Users can add/remove items as needed. Each item becomes a bullet point in the final document.
           </p>
           <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-            BBCode Output: [list]• item1\n• item2[/list]
+            BBCode Output: [list]item1\n [*]item2[/list]
           </p>
         </div>
       )}

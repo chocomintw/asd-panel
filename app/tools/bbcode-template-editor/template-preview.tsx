@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Download, Save, ArrowUpRight, Edit, Trash2 } from 'lucide-react';
+import { Download, Save, ArrowUpRight, Edit, Trash2, Asterisk } from 'lucide-react';
 import { PaperworkTemplate, TemplateField, ValidationResult } from './types';
 import { FieldEditor } from './field-editor';
 import { useEffect, useState } from 'react';
@@ -24,48 +24,52 @@ export function TemplatePreview({
   onDownload,
   onSave,
 }: TemplatePreviewProps) {
-  const [useLocalStorage, setUseLocalStorage] = useState(false);
+  const [localStorageValues, setLocalStorageValues] = useState<Record<string, any>>({});
 
   const getFieldStorageKey = (fieldName: string) => {
     return `bbcode-form-${template?.id}-${fieldName}`;
   };
 
-  // Load localStorage preference on component mount
+  // Update localStorage values state whenever template changes
   useEffect(() => {
-    const savedPreference = localStorage.getItem('template-use-localstorage');
-    if (savedPreference) {
-      setUseLocalStorage(JSON.parse(savedPreference));
+    if (template) {
+      const newValues: Record<string, any> = {};
+      template.fields.forEach(field => {
+        const storageKey = getFieldStorageKey(field.name);
+        const savedValue = localStorage.getItem(storageKey);
+        if (savedValue !== null) {
+          try {
+            newValues[field.name] = JSON.parse(savedValue);
+          } catch {
+            newValues[field.name] = savedValue;
+          }
+        }
+      });
+      setLocalStorageValues(newValues);
     }
-  }, []);
+  }, [template]);
 
-  // Save localStorage preference when it changes
+  // Load saved field values from localStorage when template changes
   useEffect(() => {
-    localStorage.setItem('template-use-localstorage', JSON.stringify(useLocalStorage));
-  }, [useLocalStorage]);
-
-  // Load saved field values from localStorage when template changes and localStorage is enabled
-  useEffect(() => {
-    if (useLocalStorage && template) {
+    if (template) {
       const updatedFields = template.fields.map(field => {
         const storageKey = getFieldStorageKey(field.name);
         const savedValue = localStorage.getItem(storageKey);
         
         if (savedValue !== null) {
           try {
-            // Try to parse as JSON in case it's a complex object
             const parsedValue = JSON.parse(savedValue);
-            return { ...field, value: parsedValue };
+            return { ...field, value: parsedValue, localStorage: true };
           } catch {
-            // If it's not valid JSON, use as string
-            return { ...field, value: savedValue };
+            return { ...field, value: savedValue, localStorage: true };
           }
         }
-        return field;
+        return { ...field, localStorage: field.localStorage || false };
       });
 
       onUpdateTemplate({ ...template, fields: updatedFields });
     }
-  }, [useLocalStorage, template?.id]);
+  }, [template?.id]);
 
   const updateField = (fieldId: string, updates: Partial<TemplateField>) => {
     if (!template) return;
@@ -77,42 +81,73 @@ export function TemplatePreview({
     const updatedTemplate = { ...template, fields: updatedFields };
     onUpdateTemplate(updatedTemplate);
 
-    // Save individual field value to localStorage if enabled
-    if (useLocalStorage) {
-      const updatedField = updatedFields.find(f => f.id === fieldId);
-      if (updatedField && 'value' in updates) {
-        const storageKey = getFieldStorageKey(updatedField.name);
-        const valueToStore = typeof updates.value === 'string' 
-          ? updates.value 
-          : JSON.stringify(updates.value);
-        localStorage.setItem(storageKey, valueToStore);
-      }
+    // Save individual field value to localStorage if enabled for this field
+    const updatedField = updatedFields.find(f => f.id === fieldId);
+    if (updatedField && 'value' in updates && updatedField.localStorage) {
+      const storageKey = getFieldStorageKey(updatedField.name);
+      const valueToStore = typeof updates.value === 'string' 
+        ? updates.value 
+        : JSON.stringify(updates.value);
+      localStorage.setItem(storageKey, valueToStore);
+      
+      // Update localStorage values state for real-time JSON preview
+      setLocalStorageValues(prev => ({
+        ...prev,
+        [updatedField.name]: updates.value
+      }));
     }
   };
 
-  const handleLocalStorageToggle = (checked: boolean) => {
-    setUseLocalStorage(checked);
+  const handleFieldLocalStorageToggle = (fieldId: string, enabled: boolean) => {
+    if (!template) return;
     
-    if (checked && template) {
-      // Save all current field values to localStorage when enabling
-      template.fields.forEach(field => {
-        if (field.value) {
+    const updatedFields = template.fields.map(field => {
+      if (field.id === fieldId) {
+        const updatedField = { ...field, localStorage: enabled };
+        
+        // If enabling, save current value to localStorage
+        if (enabled && field.value) {
           const storageKey = getFieldStorageKey(field.name);
           const valueToStore = typeof field.value === 'string' 
             ? field.value 
             : JSON.stringify(field.value);
           localStorage.setItem(storageKey, valueToStore);
+          
+          // Update localStorage values state
+          setLocalStorageValues(prev => ({
+            ...prev,
+            [field.name]: field.value
+          }));
         }
-      });
-      console.log('Field values saved to localStorage');
-    } else if (!checked && template) {
-      // Remove all saved field data when disabling
-      template.fields.forEach(field => {
-        const storageKey = getFieldStorageKey(field.name);
-        localStorage.removeItem(storageKey);
-      });
-      console.log('Field values removed from localStorage');
-    }
+        // If disabling, remove from localStorage
+        else if (!enabled) {
+          const storageKey = getFieldStorageKey(field.name);
+          localStorage.removeItem(storageKey);
+          
+          // Remove from localStorage values state
+          setLocalStorageValues(prev => {
+            const newValues = { ...prev };
+            delete newValues[field.name];
+            return newValues;
+          });
+        }
+        
+        return updatedField;
+      }
+      return field;
+    });
+
+    onUpdateTemplate({ ...template, fields: updatedFields });
+  };
+
+  const handleFieldRequiredToggle = (fieldId: string, enabled: boolean) => {
+    if (!template) return;
+    
+    const updatedFields = template.fields.map(field =>
+      field.id === fieldId ? { ...field, required: enabled } : field
+    );
+    
+    onUpdateTemplate({ ...template, fields: updatedFields });
   };
 
   const clearAllFieldData = () => {
@@ -123,14 +158,17 @@ export function TemplatePreview({
       localStorage.removeItem(storageKey);
     });
     
-    // Reset field values in the template
+    // Reset localStorage values state
+    setLocalStorageValues({});
+    
+    // Reset field values and localStorage flags in the template
     const resetFields = template.fields.map(field => ({
       ...field,
-      value: '' // or whatever default value you prefer
+      value: '',
+      localStorage: false
     }));
     
     onUpdateTemplate({ ...template, fields: resetFields });
-    console.log('All field data cleared from localStorage and form');
   };
 
   const getSavedFieldCount = () => {
@@ -139,6 +177,28 @@ export function TemplatePreview({
       const storageKey = getFieldStorageKey(field.name);
       return localStorage.getItem(storageKey) !== null;
     }).length;
+  };
+
+  const getRequiredFieldCount = () => {
+    if (!template) return 0;
+    return template.fields.filter(field => field.required).length;
+  };
+
+  // Get current field values including localStorage data for JSON preview
+  const getCurrentFieldValues = () => {
+    if (!template) return [];
+    
+    return template.fields.map(field => {
+      // Use localStorage value if available, otherwise use field value
+      const currentValue = localStorageValues[field.name] !== undefined 
+        ? localStorageValues[field.name] 
+        : field.value;
+      
+      return {
+        ...field,
+        value: currentValue
+      };
+    });
   };
 
   if (!template) {
@@ -171,6 +231,8 @@ export function TemplatePreview({
       </Card>
     );
   }
+
+  const currentFieldValues = getCurrentFieldValues();
 
   return (
     <Card className="border-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md shadow-sm hover:shadow-lg transition-all duration-500 h-full">
@@ -226,38 +288,27 @@ export function TemplatePreview({
           />
         </div>
 
-        {/* LocalStorage Toggler */}
+        {/* Field Settings Summary */}
         <div className="border rounded-lg p-4 bg-white/40 dark:bg-gray-800/40 border-transparent space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-0.5">
-              <Label htmlFor="localstorage-toggle" className="text-base">
-                Save Field Values to LocalStorage
+              <Label className="text-base flex items-center gap-2">
+                <Asterisk className="h-4 w-4 text-red-500" />
+                Required Fields
               </Label>
               <p className="text-sm text-muted-foreground">
-                {useLocalStorage 
-                  ? `${getSavedFieldCount()} of ${template.fields.length} fields saved` 
-                  : 'Field values will not persist on page refresh'
-                }
+                {getRequiredFieldCount()} of {template.fields.length} fields required
               </p>
             </div>
-            <Switch
-              id="localstorage-toggle"
-              checked={useLocalStorage}
-              onCheckedChange={handleLocalStorageToggle}
-            />
+            <div className="space-y-0.5">
+              <Label className="text-base">
+                Field Value Storage
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                {getSavedFieldCount()} of {template.fields.length} fields saved to localStorage
+              </p>
+            </div>
           </div>
-          
-          {useLocalStorage && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={clearAllFieldData}
-              className="w-full flex items-center gap-2 backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 hover:bg-white/60 dark:hover:bg-gray-800/60 border border-transparent"
-            >
-              <Trash2 className="h-3 w-3" />
-              Clear All Saved Field Data
-            </Button>
-          )}
         </div>
 
         {/* Form Fields */}
@@ -269,16 +320,56 @@ export function TemplatePreview({
           <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
             {template.fields.length > 0 ? (
               template.fields.map((field) => (
-                <div key={field.id} className="relative">
+                <div key={field.id} className="relative border rounded-lg p-3 bg-white/30 dark:bg-gray-800/30">
                   <FieldEditor
                     field={field}
                     onUpdate={(updates) => updateField(field.id, updates)}
                   />
-                  {useLocalStorage && (
-                    <div className="text-xs text-muted-foreground mt-1 flex justify-between">
-                      <span>LocalStorage: {getFieldStorageKey(field.name)}</span>
-                      <span>
-                        {localStorage.getItem(getFieldStorageKey(field.name)) ? '✓ Saved' : 'Not saved'}
+                  
+                  {/* Field Settings Row */}
+                  <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
+                    {/* Required Toggle */}
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor={`required-${field.id}`} className="text-sm flex items-center gap-1">
+                          <Asterisk className="h-3 w-3 text-red-500" />
+                          Required
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          {field.required ? 'Field is required' : 'Field is optional'}
+                        </p>
+                      </div>
+                      <Switch
+                        id={`required-${field.id}`}
+                        checked={field.required || false}
+                        onCheckedChange={(checked) => handleFieldRequiredToggle(field.id, checked)}
+                      />
+                    </div>
+
+                    {/* LocalStorage Toggle */}
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor={`localstorage-${field.id}`} className="text-sm">
+                          Save to Storage
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          {field.localStorage ? 'Value persists' : 'Value resets'}
+                        </p>
+                      </div>
+                      <Switch
+                        id={`localstorage-${field.id}`}
+                        checked={field.localStorage || false}
+                        onCheckedChange={(checked) => handleFieldLocalStorageToggle(field.id, checked)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Storage Status */}
+                  {field.localStorage && (
+                    <div className="text-xs text-muted-foreground mt-2 flex justify-between">
+                      <span>Storage Key: {getFieldStorageKey(field.name)}</span>
+                      <span className={localStorage.getItem(getFieldStorageKey(field.name)) ? 'text-green-600' : 'text-yellow-600'}>
+                        {localStorage.getItem(getFieldStorageKey(field.name)) ? '✓ Saved' : 'Not saved yet'}
                       </span>
                     </div>
                   )}
@@ -323,10 +414,17 @@ export function TemplatePreview({
               name: template.name,
               category: template.category,
               fields: template.fields.length,
-              fieldTypes: template.fields.map(f => f.type),
+              fieldValues: currentFieldValues.map(f => ({
+                name: f.name,
+                type: f.type,
+                value: f.value,
+                required: f.required || false,
+                localStorage: f.localStorage || false
+              })),
               valid: validation.isValid,
-              useLocalStorage: useLocalStorage,
-              savedFields: getSavedFieldCount()
+              requiredFields: getRequiredFieldCount(),
+              savedFields: getSavedFieldCount(),
+              totalFields: template.fields.length
             }, null, 2)}
           </pre>
         </div>
@@ -334,3 +432,5 @@ export function TemplatePreview({
     </Card>
   );
 }
+
+export default TemplatePreview;
